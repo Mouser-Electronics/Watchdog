@@ -34,7 +34,6 @@ struct Queue{
 	uint byteCapacity;
 	uint front;
 	uint back;
-	bool isBusy;
 };
 
 // Name: QUE_InitQueue

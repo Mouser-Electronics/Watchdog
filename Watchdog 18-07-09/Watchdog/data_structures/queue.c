@@ -28,11 +28,11 @@ static void QUE_GrowCapacity(volatile struct Queue* queue){
 	queue->data = malloc(queue->byteCapacity);
 
 	uint i = 0;
-	while (start != end){
+	do {
 		start = (start + queue->typeSize) % byteCap;
 		memcpy((queue->data + i), (temp + start), queue->typeSize);
 		i += queue->typeSize;
-	}
+	} while (start != end);
 	free(temp);
 }
 
@@ -87,10 +87,11 @@ void QUE_Enqueue(volatile struct Queue* queue, const void* value){
 }
 
 bool QUE_Dequeue(volatile struct Queue* queue, void* value){
-	if (queue->size == 0) return queue->isBusy = false;
+	if (queue->size == 0) return false;
 	queue->size--;
 	queue->front = (queue->front + queue->typeSize) % queue->byteCapacity;
-	memcpy(value, (queue->data + queue->front), queue->typeSize);
+	if (value != NULL)
+		memcpy(value, (queue->data + queue->front), queue->typeSize);
 
 	return true;
 }
