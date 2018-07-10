@@ -35,7 +35,8 @@
 #define LOWPOWER_TIMER_DURATION					10 // Seconds
 #define LOWPOWER_TIMER_BUTTON_DURATION			2  // Seconds
 
-#define TIMER_LENGTH		(70 * CLOCK_MILSEC_MULT)
+#define TIMER_DURATION		70 // In milliseconds
+#define TIMER_LENGTH		(TIMER_DURATION * CLOCK_MILSEC_MULT)
 #define TIMER_CALLBACK		ISR_Queue
 
 #define TIMER_CONFIG_COUNT			(TIMER_CONFIG_NONE - TIMER_CONFIG_MAIN)
@@ -62,6 +63,7 @@ typedef enum{
 typedef enum{
 	INST_NOP,
 	INST_MOTOR_REST,
+	INST_MOTOR_PRIME,
 	INST_MOTOR_WEAK,
 	INST_MOTOR_ACTIVE,
 	INST_MOTOR_SHAKE,
@@ -126,13 +128,16 @@ volatile struct TimerDuration* GetDurationOfTimer(const struct timer_descriptor*
 volatile struct TimerDuration* GetDurationOfTask(const struct timer_task* const task);
 
 /*
-// Name: ResetTimerCount
+// Name: ResetTimerCount / ResetTimer
 // Desc: Resets the count of the given timer.
 // Input: (struct timer_descriptor*) timer: The timer to reset the count of.
 */
 inline static void ResetTimerCount(struct timer_descriptor* timer){
 	hri_tccount16_write_COUNT_reg(timer->device.hw, 0);
 	//GetTaskOfTimer(timer)->time_label = timer->time;
+}
+inline static void ResetTimer(struct timer_descriptor* timer){
+	ResetTimerCount(timer);
 }
 /*
 // Name: EnableTimer

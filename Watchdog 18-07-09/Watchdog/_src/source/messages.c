@@ -50,7 +50,7 @@ void HandleEvents(){
 				}
 			}
 			else{ // Button Up
-				MotorEnqueue(MOTOR_GENERIC_BUTTON_UP_ACTION);
+				//MotorEnqueue(MOTOR_GENERIC_BUTTON_UP_ACTION);
 				switch (message.eventBandState){ // Band state
 					case BANDSTATE_DISPLAY:			EventDisplay(); break;
 					case BANDSTATE_NORMAL:			break;

@@ -57,6 +57,8 @@ void UpdateDisplay(){
 }
 
 void EventDisplay(){
+	if (connected && !isHost) return; // Guest bands cannot change range settings
+	MotorEnqueue(MOTOR_DISPLAY_EVENT_ACTION);
 	if (displaySVAR){ // Skip first up event
 		displaySVAR = 0;
 		return;
@@ -79,7 +81,6 @@ void EventDisplay(){
 			break;
 		}
 		DisableTimer(&TIMER2); // Button held timer
-		//MotorEnqueue(MOTOR_DISPLAY_EVENT_ACTION);
 	}
 	else{
 		// Extend timer
@@ -140,16 +141,19 @@ void InitConnecting() {
 	EnableTimer(&TIMER1);
 	EnableTimer(&TIMER2);
 	MotorEnqueue(MOTOR_CONNECTING_INIT_ACTION);
+	SetLED(led, ON);
 	connectingSVAR = 0;
 }
 	
 void UpdateConnecting(){
-	static uint task4CheckValue;
+	static uint task4RequiredLength;
 	static const int task4BlinkDuration = 500;
 	
+	if (button) ResetTimer(&TIMER1);
+	
 	// LED display connecting
-	task4CheckValue = 1.5 * GetDurationOfTimer(&TIMER0)->length;
-	while (task4.size < task4CheckValue){
+	task4RequiredLength = GetDurationOfTimer(&TIMER0)->length + 1;
+	while (task4.size < task4RequiredLength){
 		LEDEnqueue(led, "+");
 		LEDDelay(task4BlinkDuration);
 		LEDEnqueue(led, "=");
@@ -192,32 +196,31 @@ void EventConnecting() { /* Empty */ }
 	
 void CloseConnecting() {
 	LEDClearQueue();
-	SetLED(led, OFF);
 	DisableTimer(&TIMER1);
 	DisableTimer(&TIMER2);
 	MotorEnqueue(MOTOR_CONNECTING_CLOSE_ACTION);
 }
 	
 void InitDisconnecting() {
-	if (!connected || !isHost) return;
+	if (!connected || !isHost) return; // Only a connected host band can start a disconnect
 	/* Redo because the concept of this timer is flawed. */
 	bandState = BANDSTATE_DISCONNECTING;
 	ConfigTimer(&TIMER1, DISCONNECTING_TIMER_TIMEOUT);
 	EnableTimer(&TIMER1);
 	MotorEnqueue(MOTOR_DISCONNECTING_INIT_ACTION);
-	UpdateDisplay();
+	SetLED(led, ON);
 	disconnectingSVAR = 0;
 }
 	
 void UpdateDisconnecting(){
-	static uint task4CheckValue;
+	static uint task4RequiredLength;
 	static const uint task4BlinkDuration = 500;
 	
 	if (!connected || !isHost) return;
 	
 	// LED display disconnecting
-	task4CheckValue = 1.5 * GetDurationOfTimer(&TIMER0)->length;
-	while (task4.size < task4CheckValue){
+	task4RequiredLength = GetDurationOfTimer(&TIMER0)->length + 1;
+	while (task4.size < task4RequiredLength){
 		LEDEnqueue(led, "+");
 		LEDDelay(task4BlinkDuration);
 		LEDEnqueue(led, "=");
@@ -226,8 +229,6 @@ void UpdateDisconnecting(){
 	// Motor
 	MotorEnqueue(MOTOR_DISCONNECTING_UPDATE_ACTION);
 	
-	UpdateDisplay();
-	
 	/* Notify all guest bands of the disconnect
 	   Notify every time in the mode. In case a guest didn't hear
 	   Send EVENT_HOST_NOTIFY_DISCONNECT message to guests
@@ -235,7 +236,7 @@ void UpdateDisconnecting(){
 	
 	// Actual bluetooth disconnect handled in guest.
 	
-	// If the guest array is empty, then close disconnecting.
+	/* If the guest array is empty, then clear connected and isHost and close disconnecting. */
 }
 
 void EventDisconnecting(){
@@ -253,13 +254,14 @@ void EventDisconnecting(){
 	   wait a bit delay_s()
 	   Clear display */
 	
-	LEDEnqueue(led, MOTOR_DISCONNECTING_EVENT_ACTION); // Lines up with the motor queue
+	LEDEnqueue(led, MOTOR_DISCONNECTING_EVENT_ACTION); // LED blinks with motor (same instructions)
 	MotorEnqueue(MOTOR_DISCONNECTING_EVENT_ACTION);
 	
 	// Will go back to whatever it was doing before
 }
 	
 void CloseDisconnecting(){
+	// Called from UpdateDisconnecting, when the band has no more connections.
 	if (!connected || !isHost) return;
 	connected = false;
 	isHost = false;
@@ -278,7 +280,7 @@ void InitLowPower() {
 }
 
 void UpdateLowPower(){
-	static uint task4CheckValue;
+	static uint task4RequiredLength;
 	static const int task4BlinkDuration = 500;
 	
 	if (!connected){ // As soon as not connected, go to sleep.
@@ -287,8 +289,8 @@ void UpdateLowPower(){
 	}
 	
 	// LED display lowpower
-	task4CheckValue = 1.5 * GetDurationOfTimer(&TIMER0)->length;
-	while (task4.size <= task4CheckValue){
+	task4RequiredLength = GetDurationOfTimer(&TIMER0)->length + 1;
+	while (task4.size <= task4RequiredLength){
 		LEDEnqueue(LOWPOWER_LED_PIN, "+");
 		LEDDelay(task4BlinkDuration);
 		LEDEnqueue(LOWPOWER_LED_PIN, "=");

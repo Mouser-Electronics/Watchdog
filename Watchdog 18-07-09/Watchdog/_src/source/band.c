@@ -39,9 +39,6 @@ void BandMain(){
 	HandleUpdates();
 	/**/SLEEP:/**/
 	while (MCUBusy); // Wait for running interrupts to finish
-	if (!QUE_IsEmpty(&eventQueue)){
-		HandleUpdates();
-	}
 	if (!QUE_IsEmpty(&eventQueue))
 		goto BEGIN; // There are more events to process
 	if (MCUBusy)
@@ -83,11 +80,13 @@ void LEDEnqueue(uint pin, const char* const instructions){
 			case '-':
 			case '+':
 			case ',':
-			case '.':
 			case '^':
 			case '*': inst.type = INST_LED_ON; break;
 			case '_':
-			case '=': inst.type = INST_LED_OFF; break;
+			case '=':
+			case '.':
+			case '%':
+			case '/': inst.type = INST_LED_OFF; break;
 			default: inst.type = INST_NOP; break;
 		}
 		QUE_Enqueue(&task4, &inst);
@@ -101,9 +100,7 @@ void LEDEnqueue(uint pin, const char* const instructions){
 }
 
 void LEDClearQueue(){
-	while (!QUE_IsEmpty(&task4)){
-		QUE_Dequeue(&task4, NULL);
-	}
+	QUE_Clear(&task4);
 }
 
 bool LEDIsIdle(){
@@ -111,11 +108,12 @@ bool LEDIsIdle(){
 }
 
 void LEDDelay(uint milliseconds){
-	uint delay = milliseconds / TIMER_LENGTH;
+	uint delay = milliseconds / TIMER_DURATION;
 	char* const inst = malloc(delay + 1);
 	
 	for (uint i = 0; i < delay; i++)
 		inst[i] = '$'; // NOP
+	inst[delay] = '\0';
 	LEDEnqueue(0, inst);
 	
 	free(inst);

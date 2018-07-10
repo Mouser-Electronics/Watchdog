@@ -19,13 +19,15 @@ void MotorEnqueue(const char* const instruction){
 	temp = instruction;
 	while (*temp != '\0'){
 		switch (*temp){
+			case '_':
 			case '=':
-			case '_': inst.type = INST_MOTOR_REST; break;
 			case '.':
-			case ',': inst.type = INST_MOTOR_WEAK; break;
+			case '%':
+			case '/': inst.type = INST_MOTOR_REST; break;
 			case '+':
+			case '*': inst.type = INST_MOTOR_PRIME; break;
 			case '-': inst.type = INST_MOTOR_ACTIVE; break;
-			case '*':
+			case ',': inst.type = INST_MOTOR_WEAK; break;
 			case '^': inst.type = INST_MOTOR_SHAKE; break;
 			default: inst.type = INST_NOP; break;
 		}
@@ -40,9 +42,7 @@ void MotorEnqueue(const char* const instruction){
 }
 
 void MotorClearQueue(){
-	while (!QUE_IsEmpty(&task3)){
-		QUE_Dequeue(&task3, NULL);
-	}
+	QUE_Clear(&task3);
 }
 
 bool MotorIsIdle(){
@@ -50,7 +50,7 @@ bool MotorIsIdle(){
 }
 
 void MotorDelay(uint milliseconds){
-	uint delay = milliseconds / TIMER_LENGTH;
+	uint delay = milliseconds / TIMER_DURATION;
 	char* const inst = malloc(delay + 1);
 	
 	for (uint i = 0; i < delay; i++)

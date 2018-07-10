@@ -16,12 +16,13 @@
 /// Macros
 
 #define MOTOR_GENERIC_BUTTON_UP_ACTION		"-_"
+#define MOTOR_DISPLAY_EVENT_ACTION			"-_"
 
 #define MOTOR_CONNECTING_INIT_ACTION		"_----------_" // "_,,,,,,,,,,_"
 #define MOTOR_CONNECTING_CLOSE_ACTION		"_-_-_"
 
 #define MOTOR_DISCONNECTING_INIT_ACTION		"_-_-_-_" // "_,_,_,_"
-#define MOTOR_DISCONNECTING_UPDATE_ACTION	"-_"
+#define MOTOR_DISCONNECTING_UPDATE_ACTION	"-_" // "_,_"
 #define MOTOR_DISCONNECTING_EVENT_ACTION	MOTOR_DISCONNECTING_CLOSE_ACTION
 #define MOTOR_DISCONNECTING_CLOSE_ACTION	"_--__--__--_" // "_,,__,,__,,_"
 
@@ -41,10 +42,11 @@
 // Input: (const char* const) instructions: A null terminated string with the instructions
 //                                          to queue.
 // Instructions:
-// '_', '=' - No vibration
-// '-', '+' - Vibration
-// ',', '.' - Soft vibration (Not setup yet)
-// '^', '*' - Hard vibration (Not setup yet)
+// '_' / '=' / '.' / '%' / '/' - No vibration
+// '+' / '*' - Prime vibration (Not setup yet) // Starts the motor to where the motor is running, but the vibration is not felt.
+// '-' - Normal vibration // Starts the motor normally
+// ',' - Soft vibration (Not setup yet) // Starts the motor to where the vibration is softly felt.
+// '^' - Hard vibration (Not setup yet) // Starts the motor to where the vibration is shaking their arm.
 */
 void MotorEnqueue(const char* const instructions);
 /*

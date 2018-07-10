@@ -66,8 +66,8 @@ void FireAlarm(void);
 // Input: (const char* const) instructions: A null terminated string with the instructions
 //                                          to queue.
 // Instructions:
-// '_', '=' - LED off
-// '-', '+', ',', '.', '^', '*' - LED on
+// '_' / '=' / '.' / '%' / '/' - LED off
+// '-' / '+' / ',' / '^' / '*' - LED on
 */
 void LEDEnqueue(uint pin, const char* const instructions);
 /*

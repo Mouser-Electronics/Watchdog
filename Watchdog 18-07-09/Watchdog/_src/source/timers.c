@@ -171,7 +171,7 @@ void ISR_Timer(const struct timer_task* const task){
 	message.eventBandState = (uint8)bandState;
 	message.eventInfo[0] = EVENT_TIMER_EXPIRED;
 	*(struct timer_task**)(message.eventInfo + 1) = (struct timer_task*)task;
-	QUE_Enqueue(&writeEventQueue, &message);
+	QUE_Enqueue(writeEventQueue, &message);
 	
 	/**/END:/**/
 	if (timer == &TIMER0 && !_timer_is_started(&TIMER0.device))
@@ -193,6 +193,7 @@ void ISR_Queue(const struct timer_task* const task){
 		QUE_Dequeue(&task3, &inst);
 		switch (inst.type){
 			case INST_MOTOR_REST: SetMotor(OFF); break;
+			case INST_MOTOR_PRIME: /* Not implimented */ break;
 			case INST_MOTOR_WEAK: /* Not implimented */ break;
 			case INST_MOTOR_ACTIVE: SetMotor(ON); break;
 			case INST_MOTOR_SHAKE: /* Not implimented */ break;
