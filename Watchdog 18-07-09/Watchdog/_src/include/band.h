@@ -18,15 +18,19 @@
 
 /// Macros
 
-#define STARTING_BANDRANGE	BANDRANGE_SHORT
+#define STARTING_BANDRANGE	BANDRANGE_SHORT // The default starting band range.
 
 /// Enums
 
+/*
+// Name: BandRange
+// Desc: The possible bluetooth ranges for the band.
+*/
 typedef enum{
-	BANDRANGE_NONE,
-	BANDRANGE_SHORT,
-	BANDRANGE_MEDIUM,
-	BANDRANGE_LONG,
+	BANDRANGE_NONE,		// 0 meters
+	BANDRANGE_SHORT,	// About 10 meters
+	BANDRANGE_MEDIUM,	// About 30~40 meters
+	BANDRANGE_LONG,		// About 60~80 meters
 } BandRange;
 
 /// Function Declarations
@@ -110,6 +114,9 @@ volatile uint MCUBusy;
 //       ignored if there are events queued to be handled.
 */
 volatile bool MCUSkip;
+
+/* NEEDS TO BE COMMENTED */
+// Wait for comment until after bluetooth is functional.
 
 volatile uint32* host; // The host address
 volatile struct Array guests; // An array of guest handles

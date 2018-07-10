@@ -14,23 +14,27 @@
 
 /// Macros
 
-#define LOWPOWER_LED_PIN	LEDR
+#define LOWPOWER_LED_PIN	LEDR // The pin to use for low power mode blinking.
 
 /// Enums
 
+/*
+// Name: BandState
+// Desc: The possible band modes of a band.
+*/
 typedef enum{
-	BANDSTATE_NONE = 0,
-	BANDSTATE_DISPLAY,
-	BANDSTATE_NORMAL,
-	BANDSTATE_CONNECTING,
-	BANDSTATE_DISCONNECTING,
-	BANDSTATE_LOWPOWER,
-	BANDSTATE_SLEEP,
+	BANDSTATE_NONE = 0,			// No Mode
+	BANDSTATE_DISPLAY,			// Display Mode
+	BANDSTATE_NORMAL,			// Normal Mode
+	BANDSTATE_CONNECTING,		// Connecting Mode
+	BANDSTATE_DISCONNECTING,	// Disconnecting Mode
+	BANDSTATE_LOWPOWER,			// LowPower mode
+	BANDSTATE_SLEEP,			// Sleep Mode
 } BandState;
 
 /// Function Declarations
 
-// In general, Update functions happen on main clock cycle, Event functions happens on an event.
+// In general, Update functions happen in main loop, Event functions happen on an event (but handled in main loop [Only 2 exceptions]).
 
 /* Glossary */
 // CALLING MODES - Modes that can initialize the current mode.
@@ -38,6 +42,8 @@ typedef enum{
 //                 The current mode might not literally call the mode.
 // FALLING MODES - Modes that can be initialized by the current mode.
 //                 The current mode "falls back into" the mode listed.
+
+
 
 /// Display Mode
 // Shows the current states of the band through LED indicators.
@@ -208,7 +214,7 @@ void CloseLowPower(void);
 // Accelerometer motion event ends Sleep Mode.
 /* CALLING MODES */
 // Normal Mode: On Normal Mode timeout.
-// Low Power Mode: When disconnected or close to brownout.
+// Low Power Mode: When disconnected or near brownout.
 /* FALLING MODES */
 // Display Mode: On wakeup event. (Falls back to Normal Mode)
 
@@ -237,16 +243,41 @@ void CloseSleep(void);
 
 /*
 // Name: bandState
-// Desc: The current main band state of the band.
+// Desc: The band's current band mode.
 */
 BandState bandState;
 
-// Mode specific shared variables
+// Mode specific shared variables (Some/Most might never be used).
+
+/*
+// Name: displaySVAR
+// Desc: A variable for sharing information between display mode functions.
+*/
 static volatile uint displaySVAR;
+/*
+// Name: normalSVAR
+// Desc: A variable for sharing information between normal mode functions.
+*/
 static volatile uint normalSVAR;
+/*
+// Name: connectingSVAR
+// Desc: A variable for sharing information between connecting mode functions.
+*/
 static volatile uint connectingSVAR;
+/*
+// Name: disconnectingSVAR
+// Desc: A variable for sharing information between disconnecting mode functions.
+*/
 static volatile uint disconnectingSVAR;
+/*
+// Name: lowpowerSVAR
+// Desc: A variable for sharing information between low power mode functions.
+*/
 static volatile uint lowpowerSVAR;
+/*
+// Name: sleepSVAR
+// Desc: A variable for sharing information between sleep mode functions.
+*/
 static volatile uint sleepSVAR;
 
 

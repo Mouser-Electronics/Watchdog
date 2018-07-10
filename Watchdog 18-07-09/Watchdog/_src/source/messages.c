@@ -36,7 +36,7 @@ void HandleEvents(){
 	while (QUE_Dequeue(readEventQueue, &message)){
 		switch (message.eventType){
 			case EVENT_BUTTON:
-			if (message.eventInfo[BUTTON_EVENT_INFO_BUTTON_STATE] == button) break; // Double event (not supposed to happen)
+			if (message.eventInfo[BUTTON_EVENT_INFO_BUTTON_STATE] == button) break; // Double event (not supposed to happen). Explained more by EXPLANATION_INTERRUPT_OVERSHADOW. Hint: You can right click the EXP...etc. in the previous sentence and click "Goto Implementation". 
 			else button = message.eventInfo[BUTTON_EVENT_INFO_BUTTON_STATE]; // Set button
 			if (button){ // Button Down
 				switch (message.eventBandState){ // Band state

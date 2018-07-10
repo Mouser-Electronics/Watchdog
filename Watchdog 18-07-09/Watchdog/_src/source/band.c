@@ -39,7 +39,7 @@ void BandMain(){
 	HandleUpdates();
 	/**/SLEEP:/**/
 	while (MCUBusy); // Wait for running interrupts to finish
-	if (!QUE_IsEmpty(&eventQueue))
+	if (!QUE_IsEmpty(writeEventQueue))
 		goto BEGIN; // There are more events to process
 	if (MCUBusy)
 		goto SLEEP; // In the short amount of time it took to run IsEmpty, an interrupt happened... sigh...

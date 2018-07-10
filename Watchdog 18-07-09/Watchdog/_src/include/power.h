@@ -27,24 +27,39 @@
 
 /// Enums
 
+/*
+// Name: PowerMode
+// Desc: The possible sleep states of the MCU.
+*/
 typedef enum{
-	POWERMODE_IDLE		= SLEEPMODE_IDLE,
-	POWERMODE_STANDBY	= SLEEPMODE_STANDBY,
+	POWERMODE_IDLE		= SLEEPMODE_IDLE,		// Soft sleep. Low power consumption. Short wakeup time.
+	POWERMODE_STANDBY	= SLEEPMODE_STANDBY,	// Hard sleep. Lowest power consumption. Long wakeup time.
 } PowerMode;
 
 /// Functions
 
+/*
+// Name: SetPowerMode
+// Desc: Sets up the power mode to use next time the board is put to sleep.
+// Input: (PowerMode) mode: The power mode to use for sleep.
+*/
 inline static void SetPowerMode(PowerMode mode){
 	hri_pm_set_SLEEPCFG_SLEEPMODE_bf((void*)PM, (uint8)mode);
 	delay_ms(2); // So the registers can update
 }
 
+/*
+// Name: GoToSleep
+// Desc: The function that gives the command to go to sleep.
+*/
 inline static void GoToSleep(void){
 	_go_to_sleep();
 }
 
-// Functions
-
+/*
+// Name: InitPowerModule
+// Desc: Nothing fancy; just sets the power mode to idle.
+*/
 inline static void InitPowerModule(void){
 	SetPowerMode(POWERMODE_IDLE);
 }

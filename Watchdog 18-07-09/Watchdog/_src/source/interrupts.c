@@ -11,7 +11,6 @@
 #include "band.h"
 #include "modes.h"
 #include "messages.h"
-
 #include "power.h"
 
 /// Function Definitions

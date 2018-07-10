@@ -37,13 +37,9 @@ void UpdateDisplay(){
 			SetLED(MLED, OFF);
 			SetLED(LLED, OFF);
 		break;
-		case BANDRANGE_LONG:
-			SetLED(LLED, ON);
-		case BANDRANGE_MEDIUM:
-			SetLED(MLED, ON);
-		case BANDRANGE_SHORT:
-			SetLED(SLED, ON);
-		break;
+		case BANDRANGE_LONG:	SetLED(LLED, ON);
+		case BANDRANGE_MEDIUM:	SetLED(MLED, ON);
+		case BANDRANGE_SHORT:	SetLED(SLED, ON); break;
 	}
 	// Primary LED clear and set
 	SetLED(led, OFF); // Clear old one
@@ -58,13 +54,13 @@ void UpdateDisplay(){
 
 void EventDisplay(){
 	if (connected && !isHost) return; // Guest bands cannot change range settings
-	MotorEnqueue(MOTOR_DISPLAY_EVENT_ACTION);
 	if (displaySVAR){ // Skip first up event
 		displaySVAR = 0;
 		return;
 	}
 	// Change range on button up
 	if (!button){
+		MotorEnqueue(MOTOR_DISPLAY_EVENT_ACTION);
 		// Change Range
 		switch(bandRange){
 			case BANDRANGE_NONE:
@@ -343,4 +339,5 @@ void CloseSleep(){
 	SetPowerMode(POWERMODE_IDLE);
 	MotorEnqueue(MOTOR_SLEEP_CLOSE_ACTION);
 	/* Put the BMI160 into the normal setting (still low power, but a little more accurate) */
+	bandRange = STARTING_BANDRANGE; // Reset bandrange
 }

@@ -18,12 +18,12 @@
 #define MOTOR_GENERIC_BUTTON_UP_ACTION		"-_"
 #define MOTOR_DISPLAY_EVENT_ACTION			"-_"
 
-#define MOTOR_CONNECTING_INIT_ACTION		"_----------_" // "_,,,,,,,,,,_"
+#define MOTOR_CONNECTING_INIT_ACTION		"_----__----_" // "_,,,,,,,,,,_"
 #define MOTOR_CONNECTING_CLOSE_ACTION		"_-_-_"
 
 #define MOTOR_DISCONNECTING_INIT_ACTION		"_-_-_-_" // "_,_,_,_"
 #define MOTOR_DISCONNECTING_UPDATE_ACTION	"-_" // "_,_"
-#define MOTOR_DISCONNECTING_EVENT_ACTION	MOTOR_DISCONNECTING_CLOSE_ACTION
+#define MOTOR_DISCONNECTING_EVENT_ACTION	MOTOR_DISCONNECTING_CLOSE_ACTION // Event is just closing action but for guest band.
 #define MOTOR_DISCONNECTING_CLOSE_ACTION	"_--__--__--_" // "_,,__,,__,,_"
 
 #define MOTOR_LOWPOWER_INIT_ACTION			"_---_---_---_"

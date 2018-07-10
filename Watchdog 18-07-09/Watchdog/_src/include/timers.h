@@ -35,54 +35,85 @@
 #define LOWPOWER_TIMER_DURATION					10 // Seconds
 #define LOWPOWER_TIMER_BUTTON_DURATION			2  // Seconds
 
-#define TIMER_DURATION		70 // In milliseconds
-#define TIMER_LENGTH		(TIMER_DURATION * CLOCK_MILSEC_MULT)
-#define TIMER_CALLBACK		ISR_Queue
+#define TIMER_DURATION		70 // In milliseconds. Used for Motor and LED queue.
+#define TIMER_LENGTH		(TIMER_DURATION * CLOCK_MILSEC_MULT) // The queue timer duration in clock cycles
+#define TIMER_CALLBACK		ISR_Queue // The callback for the queue timer.
 
-#define TIMER_CONFIG_COUNT			(TIMER_CONFIG_NONE - TIMER_CONFIG_MAIN)
-#define TIMER_CONFIG_MAX_DURATION	10 // In seconds
+#define TIMER_CONFIG_COUNT			(TIMER_CONFIG_NONE - TIMER_CONFIG_MAIN) // The number of different timer configurations.
+#define TIMER_CONFIG_MAX_DURATION	10 // In seconds. Limited by hardware. Should never go above 16. Will affect the timer resolution of durations longer than itself.
 
 /// Enums
 
+/*
+// Name: TimerConfig
+// Desc: The timer configurations that a timer can have (TIMER3's config cannot[should not] change).
+*/
 typedef enum{
-	TIMER_CONFIG_MAIN = 0,
-	TIMER_CONFIG_DISPLAY,
-	TIMER_CONFIG_DISPLAY_BUTTON,
-	TIMER_CONFIG_NORMAL,
-	TIMER_CONFIG_CONNECTING,
-	TIMER_CONFIG_CONNECTING_TIMEOUT,
-	TIMER_CONFIG_DISCONNECTING_TIMEOUT,
-	TIMER_CONFIG_LOWPOWER,
-	TIMER_CONFIG_LOWPOWER_BUTTON,
+	TIMER_CONFIG_MAIN = 0,					// Main timer configuration
+	TIMER_CONFIG_DISPLAY,					// Display timer configuration
+	TIMER_CONFIG_DISPLAY_BUTTON,			// Display Button timer configuration
+	TIMER_CONFIG_NORMAL,					// Normal timer configuration
+	TIMER_CONFIG_CONNECTING,				// Connecting timer configuration
+	TIMER_CONFIG_CONNECTING_TIMEOUT,		// Connecting Timeout timer configuration
+	TIMER_CONFIG_DISCONNECTING_TIMEOUT,		// Disconnect Timeout timer configuration
+	TIMER_CONFIG_LOWPOWER,					// Lowpower timer configuration
+	TIMER_CONFIG_LOWPOWER_BUTTON,			// Lowpower Button timer configuration
 	/*** PUT NEW ENTRIES BETWEEN HERE ***/
 	
 	/*** PUT NEW ENTRIES BETWEEN HERE ***/
-	TIMER_CONFIG_NONE,
+	TIMER_CONFIG_NONE, // No config
 } TimerConfig;
 
+/*
+// Name: QueueInstruction
+// Desc: The possible queue instructions a QueueInst can have.
+*/
 typedef enum{
-	INST_NOP,
-	INST_MOTOR_REST,
-	INST_MOTOR_PRIME,
-	INST_MOTOR_WEAK,
-	INST_MOTOR_ACTIVE,
-	INST_MOTOR_SHAKE,
-	INST_LED_ON,
-	INST_LED_OFF,
+	INST_NOP,			// No operation
+	INST_MOTOR_REST,	// Stop the motor
+	INST_MOTOR_PRIME,	// Prime the motor
+	INST_MOTOR_WEAK,	// Start the motor soft
+	INST_MOTOR_ACTIVE,	// Start the motor normal
+	INST_MOTOR_SHAKE,	// Start the motor hard
+	INST_LED_ON,		// Turn on LED
+	INST_LED_OFF,		// Turn off LED
 } QueueInstruction;
 
 /// Structs
 
+/*
+// Name: TimerDuration
+// Desc: The configuration/duration of a timer. Also assists in the timer's function.
+// Members: (TimerConfig) id: The identity of the timer configuration.
+//          (float) duration: The duration of the timer in seconds. Resolution of actual
+//                            timer duration changes based on the duration value.
+//          (uint)    cycles: The number of cycles for the duration. (duration * CLOCK_SEC_MULT)
+//          (uint)    length: The approximate number of TIMER3 ticks for the duration.
+//                            Useful for syncing motor and LED queue to main loop.
+//          (bool)  overtime: If the duration is longer than a timer can handle; Above
+//                            TIMER_CONFIG_MAX_DURATION. When in overtime, not every timer
+//                            tick causes an event.
+//          (uint)     count: The count for when the duration is in overtime. Increments
+//                            every timer tick when in overtime.
+//          (uint)  countCap: The stopping point of the count. When count meets this
+//                            value, the event is triggered.
+*/
 struct TimerDuration{
-	TimerConfig	id;			// The identity of the duration
-	float duration;			// In seconds
-	uint cycles;			// Number of cycles for the duration
-	uint length;			// The approximate number of TIMER3 cycles for the duration
-	bool overtime;			// If the duration is longer than the timer can handle
-	uint count;				// Count for when the duration is in overtime
-	uint countCap;			// The cap of the count. Fired event when count is equal to this number.
+	TimerConfig	id;
+	float duration;
+	uint cycles;
+	uint length;
+	bool overtime;
+	uint count;
+	uint countCap;
 };
 
+/*
+// Name: QueueInst
+// Desc: A motor or LED queue instruction.
+// Members: (QueueInstruction) type: The instruction to carry out.
+//          (uint)             misc: Other information if needed.
+*/
 struct QueueInst{
 	QueueInstruction type;
 	uint misc;
