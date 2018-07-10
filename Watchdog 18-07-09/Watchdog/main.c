@@ -61,39 +61,6 @@ void Init(){
 		MotorEnqueue("_------------------------------_");
 	}
 	
-	/// Setting up accelerometer
-	// Config Accelerometer
-	if (i2cMaster != NULL){ // Make sure it's initialized
-		WriteReg(I2C_ACC_CONF_REG, I2C_ACC_CONF_US | I2C_ACC_CONF_BWP | I2C_ACC_CONF_ODR);
-		
-		WriteReg(I2C_ACC_RANGE_REG, I2C_ACC_RANGE);
-		// Config Interrupts
-		WriteReg(I2C_ACC_INT_EN0_REG, I2C_ACC_INT_EN0);
-		WriteReg(I2C_ACC_INT_EN1_REG, I2C_ACC_INT_EN1);
-		WriteReg(I2C_ACC_INT_EN2_REG, I2C_ACC_INT_EN2);
-		
-		WriteReg(I2C_ACC_INT_OUT_CTRL_REG, I2C_ACC_INT_OUT_CTRL);
-
-		WriteReg(I2C_ACC_INT_MAP0_REG, I2C_ACC_INT_MAP0);
-		WriteReg(I2C_ACC_INT_MAP1_REG, I2C_ACC_INT_MAP1);
-		WriteReg(I2C_ACC_INT_MAP2_REG, I2C_ACC_INT_MAP2);
-
-		WriteReg(I2C_ACC_INT_MOTION0_REG, I2C_ACC_INT_MOTION0_SLONO_DUR | I2C_ACC_INT_MOTION0_ANYM_DUR);
-		WriteReg(I2C_ACC_INT_MOTION1_REG, I2C_ACC_INT_MOTION1);
-		WriteReg(I2C_ACC_INT_MOTION2_REG, I2C_ACC_INT_MOTION2);
-		WriteReg(I2C_ACC_INT_MOTION3_REG, I2C_ACC_INT_MOTION3_SIG_MOT_PROOF | I2C_ACC_INT_MOTION3_SIG_MOT_SKIP | I2C_ACC_INT_MOTION3_SIG_MOT_SEL | I2C_ACC_INT_MOTION3_NO_MOT_SEL);
-
-		// Set Power modes
-		WriteReg(I2C_ACC_CMD, I2C_ACC_CMD_ACC_POWER_MODE | I2C_ACC_CMD_LOWPOWER);
-		delay_ms(I2C_ACC_CMD_ACC_WAIT_TIME);
-		
-		WriteReg(I2C_ACC_CMD, I2C_ACC_CMD_GYR_POWER_MODE | I2C_ACC_CMD_SUSPEND);
-		delay_ms(I2C_ACC_CMD_GYR_WAIT_TIME);
-		
-		WriteReg(I2C_ACC_CMD, I2C_ACC_CMD_MAG_POWER_MODE | I2C_ACC_CMD_SUSPEND);
-		delay_ms(I2C_ACC_CMD_MAG_WAIT_TIME);
-	}
-	
 	/// Setting up BlueTooth
 	
 	/// Other
@@ -110,7 +77,7 @@ void Init(){
 	// Successful Init Indicator
 	static const bool testing = false;
 	if (testing){
-		MotorEnqueue("_-_-_");
+		MotorEnqueue("_--__--_");
 	}
 	else{
 		MotorEnqueue("_-_-_");
