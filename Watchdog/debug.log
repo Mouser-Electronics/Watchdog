@@ -1,1 +1,4 @@
-
+[0705/083748:WARNING:raw_channel_win.cc(532)] WriteFile: The pipe is being closed. (0xE8)
+[0705/083748:WARNING:channel.cc(359)] RawChannel write error
+[0705/111152:WARNING:raw_channel_win.cc(532)] WriteFile: The pipe is being closed. (0xE8)
+[0806/134929:ERROR:ipc_channel_win.cc(512)] pipe error: 232
