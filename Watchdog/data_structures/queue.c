@@ -27,13 +27,17 @@ static void QUE_GrowCapacity(volatile struct Queue* queue){
 	uint pcBack;
 	
 	memcpy((void*)&old, (void*)queue, sizeof(struct Queue));
-	// Pit Crew
+	// Now that I think about it, the above line is just "old = *queue;" I'm too afraid to change it since I
+	// have no idea if it will break anything. But since it works, here it will stay.
+	
+	// Pit Crew Setup
 	pcData  = malloc(old.byteCapacity * 2);
 	pcFront = -old.typeSize;
 	pcBack  = (old.size - 1) * old.typeSize;
 
 	// Setup queue to allow external modification immediately (The queue can be modified WHILE growing in capacity) [You should't do that though]
 	// The next three lines, once started, need to be done quickly. (hence the pit crew)
+	// Pit-Stop
 	queue->front = pcFront;
 	queue->data  = pcData;
 	queue->back  = pcBack;
