@@ -37,7 +37,7 @@ static void QUE_GrowCapacity(volatile struct Queue* queue){
 	queue->front = pcFront;
 	queue->data  = pcData;
 	queue->back  = pcBack;
-	// "Wow! That change was so fast, it even put Mercedes' pit to shame!" - Not Me (it was me)
+	// "Wow! That change was so fast, it put all of F1 to shame!" - Not Me (it was me)
 	
 	queue->capacity *= 2;
 	queue->byteCapacity *= 2;
